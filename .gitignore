@@ -1,2 +1,5 @@
 Makefile
 **/*.o
+CMakeCache.txt
+
+CMakeFiles/*
