@@ -5,8 +5,10 @@
 #include "World.h"
 #include "DNA.h"
 #include "Organism.h"
-//#include "GraphicDisplay.h"
 
+#ifdef SFML_FOUND
+#include "GraphicDisplay.h"
+#endif
 
 World::World(int width, int height, uint32_t seed) {
   width_ = width;
@@ -89,7 +91,9 @@ void World::init_environment() {
 }
 
 void World::run_evolution() {
-  //GraphicDisplay* display = new GraphicDisplay(this);
+#ifdef SFML_FOUND
+  GraphicDisplay* display = new GraphicDisplay(this);
+#endif
   while (time_ < Common::Number_Evolution_Step) {
     evolution_step();
     int living_one = 0;
@@ -100,8 +104,9 @@ void World::run_evolution() {
         }
       }
     }
-
-    //display->display();
+#ifdef SFML_FOUND
+    display->display();
+#endif
     stats();
     if (time_%100 == 0) {
       printf(
