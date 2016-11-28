@@ -10,6 +10,7 @@ add_executable(pdc_evol_model ${SOURCE_FILES})
 
 #find_package(SFML 2 REQUIRED graphics window system)
 if(SFML_FOUND)
+    add_executable(pdc_evol_model src/GraphicDisplay.cpp src/GraphicDisplay.h)
     include_directories(${SFML_INCLUDE_DIR})
     target_link_libraries(pdc_evol_model ${SFML_LIBRARIES})
 endif(SFML_FOUND)
