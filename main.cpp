@@ -14,7 +14,7 @@ int main() {
   printf("Initialize environment\n");
   world->init_environment();
 
-  bool test = false;
+  bool test = true;
   if (test) {
     world->test_mutate();
   } else {

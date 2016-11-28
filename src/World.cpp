@@ -220,14 +220,15 @@ void World::test_mutate() {
 
   float fitness = 0.0;
   Organism* org = nullptr;
-  DNA* dna = nullptr;
+  //DNA* dna = nullptr;
+  DNA* dna = new DNA(grid_cell_[0]);
   printf("Searching for a viable organism ");
 
   long i = 0;
   while (fitness <= 0.0) {
     delete org;
-    dna = new DNA(grid_cell_[0]);
-    org = new Organism(new DNA(dna));
+    //dna = new DNA(grid_cell_[0]);
+    org = new Organism(dna);
     org->gridcell_ = grid_cell_[0];
     org->init_organism();
     org->build_regulation_network();
@@ -236,7 +237,7 @@ void World::test_mutate() {
     org->compute_fitness();
     fitness = org->fitness_;
     printf(".");
-    delete dna;
+    //delete dna;
     //if (i%100==0) printf(".");
     i++;
   }
