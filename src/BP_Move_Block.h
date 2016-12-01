@@ -18,8 +18,10 @@ class BP_Move_Block {
         bp_move_list_.push_back(new BP_Move(move));
       }
     };
+
     BP_Move_Block() {
     };
+
     ~BP_Move_Block() {
       for (auto move : bp_move_list_) {
         delete move;

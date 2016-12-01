@@ -35,27 +35,24 @@ World::World(int width, int height, uint32_t seed) {
 void World::random_population() {
   float fitness = 0.0;
   Organism* org = nullptr;
-  DNA* dna = nullptr;
   printf("Searching for a viable organism ");
 
   long i = 0;
   while (fitness <= 0.0) {
     delete org;
-    dna = new DNA(grid_cell_[0]);
-    org = new Organism(new DNA(dna));
+    org = new Organism(new DNA(grid_cell_[0]));
     org->gridcell_ = grid_cell_[0];
     org->init_organism();
     org->build_regulation_network();
-    for (int t = 0; t < Common::Number_Degradation_Step; t++)
+    for (int t = 0; t < Common::Number_Degradation_Step; t++){
       org->compute_protein_concentration();
+		}
     org->compute_fitness();
     fitness = org->fitness_;
     if (org->dying_or_not()) {
       fitness = 0;
     }
     printf(".");
-    delete dna;
-    //if (i%100==0) printf(".");
     i++;
   }
 
@@ -108,7 +105,7 @@ void World::run_evolution() {
     display->display();
 #endif
     stats();
-    if (time_%100 == 0) {
+    if (time_%Common::Time_flush == 0) {
       printf(
           "Evolution at step %d -- Number of Organism %d  (Dead: %d -- Mutant: %d)-- Min Fitness: %f -- Max Fitness: %f\n",
           time_, living_one, death_, new_mutant_, min_fitness_, max_fitness_);
