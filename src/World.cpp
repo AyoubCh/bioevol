@@ -259,8 +259,7 @@ void World::test_mutate() {
   int dna_size_equal = 0;
   int dna_size_smaller = 0;
 
-  // TEST MUTATE (1,000,000)
-  for (int i = 0; i < 10000;i++) {
+  for (int i = 0; i < TEST_MUTATE;i++) {
     if (i%1000==0) printf("%d\n",i);
 
     Organism* org_new = new Organism(new DNA(org->dna_));

@@ -14,6 +14,7 @@
 #include <fstream>
 
 class GridCell;
+const int TEST_MUTATE = 1000;
 
 class World {
  public:
