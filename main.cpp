@@ -1,10 +1,11 @@
 #include <iostream>
 #include "src/World.h"
 #include "src/Common.h"
+#include <string.h>
 
 using namespace std;
 
-int main() {
+int main(int args, char** argv) {
   printf("Init binding matrix\n");
   Common::init_binding_matrix(897685687);
 
@@ -15,6 +16,7 @@ int main() {
   world->init_environment();
 
   bool test = false;
+  if (args == 2 && !strcmp("-t", argv[1])) test = true;
   if (test) {
     world->test_mutate();
   } else {
