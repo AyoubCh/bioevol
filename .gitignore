@@ -8,6 +8,6 @@ pdc_evol_model
 cmake_install.cmake
 stats_best.txt
 stats_mean.txt
-run.sh
+
 out.callgrind
 callgrind_output
