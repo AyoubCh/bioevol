@@ -219,6 +219,45 @@ void World::evolution_step() {
   }
 }
 
+void World::do_test(Organism* org){
+
+  int better = 0;
+  int worse = 0;
+  int equal = 0;
+  
+   // TEST MUTATE (100) / print every 10
+  for (int i = 0; i < Common::Number_Evolution_Step;i++) {
+    if (i%Common::Time_flush==0) printf("%d\n",i);
+
+    Organism* org_new = new Organism(new DNA(org->dna_));
+    org_new->gridcell_ = grid_cell_[0];
+    org_new->mutate();
+    org_new->init_organism();
+    org_new->activate_pump();
+    org_new->build_regulation_network();
+
+    for (int t = 0; t < Common::Number_Degradation_Step; t++)
+      org_new->compute_protein_concentration();
+
+    if (org_new->dying_or_not()) {
+      death_++;
+    }
+
+    org_new->compute_fitness();
+
+    if (org->fitness_ == org_new->fitness_)
+      equal++;
+    else if (org->fitness_ > org_new->fitness_)
+      worse++;
+    else if (org->fitness_ < org_new->fitness_)
+      better++;
+
+    delete org_new;
+  }
+
+  printf("Death %d -- Worse %d -- Better %d -- Equal %d\n",death_,worse,better,equal);
+}
+
 void World::test_mutate() {
 
   float fitness = 0.0;
@@ -249,48 +288,16 @@ void World::test_mutate() {
 
   min_fitness_ = org->fitness_;
   max_fitness_ = org->fitness_;
+  
   death_ = 0;
-
-  int better = 0;
-  int worse = 0;
-  int equal = 0;
 
   int dna_size_larger = 0;
   int dna_size_equal = 0;
   int dna_size_smaller = 0;
 
-  // TEST MUTATE (100) / print every 10
-  for (int i = 0; i < Common::Number_Evolution_Step;i++) {
-    if (i%Common::Time_flush==0) printf("%d\n",i);
-
-    Organism* org_new = new Organism(new DNA(org->dna_));
-    org_new->gridcell_ = grid_cell_[0];
-    org_new->mutate();
-    org_new->init_organism();
-    org_new->activate_pump();
-    org_new->build_regulation_network();
-
-    for (int t = 0; t < Common::Number_Degradation_Step; t++)
-      org_new->compute_protein_concentration();
-
-    if (org_new->dying_or_not()) {
-      death_++;
-    }
-
-    org_new->compute_fitness();
-
-    if (org->fitness_ == org_new->fitness_)
-      equal++;
-    else if (org->fitness_ > org_new->fitness_)
-      worse++;
-    else if (org->fitness_ < org_new->fitness_)
-      better++;
-
-    delete org_new;
-  }
-
+  do_test(org);
   delete org;
-  printf("Death %d -- Worse %d -- Better %d -- Equal %d\n",death_,worse,better,equal);
+  
 }
 
 void World::stats() {

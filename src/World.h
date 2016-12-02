@@ -14,6 +14,7 @@
 #include <fstream>
 
 class GridCell;
+class Organism;
 const int TEST_MUTATE = 1000;
 
 class World {
@@ -47,6 +48,9 @@ class World {
     void init_environment();
 
     void stats();
+    
+    private :
+        void do_test(Organism*);
 };
 
 
