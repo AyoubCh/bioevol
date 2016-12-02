@@ -10,6 +10,7 @@
 #include "GraphicDisplay.h"
 #endif
 
+
 World::World(int width, int height, uint32_t seed) {
   width_ = width;
   height_ = height;
@@ -260,7 +261,7 @@ void World::test_mutate() {
 
   // TEST MUTATE (100) / print every 10
   for (int i = 0; i < Common::Number_Evolution_Step;i++) {
-    if (i%Common::Time_flush==0) printf("%d\n",i); 
+    if (i%Common::Time_flush==0) printf("%d\n",i);
 
     Organism* org_new = new Organism(new DNA(org->dna_));
     org_new->gridcell_ = grid_cell_[0];
