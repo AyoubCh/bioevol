@@ -289,6 +289,7 @@ void World::test_mutate() {
     delete org_new;
   }
 
+  delete org;
   printf("Death %d -- Worse %d -- Better %d -- Equal %d\n",death_,worse,better,equal);
 }
 
