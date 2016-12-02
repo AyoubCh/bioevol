@@ -16,7 +16,9 @@ class DNA {
         bp_list_.push_back(new BP(bp));
       }
     }; // Clone
+
     DNA(GridCell* grid_cell); // Random one
+    
     ~DNA() {
       for (auto bp : bp_list_)
         delete bp;

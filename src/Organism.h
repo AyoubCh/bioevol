@@ -19,6 +19,7 @@ class DNA;
 
 class Organism {
  public:
+    Organism(){};
     Organism(Organism* organism);
     Organism(DNA* dna) { dna_ = dna;};
     ~Organism();

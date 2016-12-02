@@ -7,6 +7,13 @@
 #include "Common.h"
 
 
+void Organism::init_organism() {
+  translate_RNA();
+  translate_protein();
+  translate_pump();
+  translate_move();
+}
+
 void Organism::translate_RNA() {
 
   RNA* current_rna = nullptr;
@@ -244,12 +251,7 @@ void Organism::activate_pump() {
   }
 }
 
-void Organism::init_organism() {
-  translate_RNA();
-  translate_protein();
-  translate_pump();
-  translate_move();
-}
+
 
 void Organism::compute_protein_concentration() {
   int rna_id = 0;

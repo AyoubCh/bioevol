@@ -31,7 +31,7 @@ class BP_Protein_Block {
     }
 
     std::vector<BP_Protein*> bp_prot_list_;
-};
+};																																																										
 
 
 #endif //PDC_EVOL_MODEL_BP_PROTEIN_BLOCK_H

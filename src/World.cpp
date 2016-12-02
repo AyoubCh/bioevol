@@ -10,6 +10,7 @@
 #include "GraphicDisplay.h"
 #endif
 
+
 World::World(int width, int height, uint32_t seed) {
   width_ = width;
   height_ = height;
@@ -35,27 +36,24 @@ World::World(int width, int height, uint32_t seed) {
 void World::random_population() {
   float fitness = 0.0;
   Organism* org = nullptr;
-  DNA* dna = nullptr;
   printf("Searching for a viable organism ");
 
   long i = 0;
   while (fitness <= 0.0) {
     delete org;
-    dna = new DNA(grid_cell_[0]);
-    org = new Organism(new DNA(dna));
+    org = new Organism(new DNA(grid_cell_[0]));
     org->gridcell_ = grid_cell_[0];
     org->init_organism();
     org->build_regulation_network();
-    for (int t = 0; t < Common::Number_Degradation_Step; t++)
+    for (int t = 0; t < Common::Number_Degradation_Step; t++){
       org->compute_protein_concentration();
+		}
     org->compute_fitness();
     fitness = org->fitness_;
     if (org->dying_or_not()) {
       fitness = 0;
     }
     printf(".");
-    delete dna;
-    //if (i%100==0) printf(".");
     i++;
   }
 
@@ -108,7 +106,7 @@ void World::run_evolution() {
     display->display();
 #endif
     stats();
-    if (time_%100 == 0) {
+    if (time_%Common::Time_flush == 0) {
       printf(
           "Evolution at step %d -- Number of Organism %d  (Dead: %d -- Mutant: %d)-- Min Fitness: %f -- Max Fitness: %f\n",
           time_, living_one, death_, new_mutant_, min_fitness_, max_fitness_);
@@ -224,17 +222,19 @@ void World::evolution_step() {
 void World::test_mutate() {
 
   float fitness = 0.0;
-  Organism* org = nullptr;
-  //DNA* dna = nullptr;
-  DNA* dna = new DNA(grid_cell_[0]);
+  DNA* dna = nullptr;
+  //DNA* dna = new DNA(grid_cell_[0]);
+  //Organism* org = nullptr;
+  Organism* org = new Organism();
+  org->gridcell_ = grid_cell_[0];
   printf("Searching for a viable organism ");
 
   long i = 0;
   while (fitness <= 0.0) {
-    delete org;
+    //delete org;
     //dna = new DNA(grid_cell_[0]);
-    org = new Organism(dna);
-    org->gridcell_ = grid_cell_[0];
+    //org = new Organism(dna);
+		org-> dna_ = new DNA(grid_cell_[0]);
     org->init_organism();
     org->build_regulation_network();
     for (int t = 0; t < Common::Number_Degradation_Step; t++)
@@ -259,8 +259,9 @@ void World::test_mutate() {
   int dna_size_equal = 0;
   int dna_size_smaller = 0;
 
-  for (int i = 0; i < TEST_MUTATE;i++) {
-    if (i%1000==0) printf("%d\n",i);
+  // TEST MUTATE (100) / print every 10
+  for (int i = 0; i < Common::Number_Evolution_Step;i++) {
+    if (i%Common::Time_flush==0) printf("%d\n",i);
 
     Organism* org_new = new Organism(new DNA(org->dna_));
     org_new->gridcell_ = grid_cell_[0];
