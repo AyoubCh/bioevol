@@ -5,7 +5,7 @@
 //#include <stdint-gcc.h>
 #include <stdint.h>
 #include <random>
-#include <zlib.h>
+#include <QTZlib/zlib.h>
 #include "Common.h"
 
 float Common::matrix_binding_[BINDING_MATRIX_SIZE*BINDING_MATRIX_SIZE];

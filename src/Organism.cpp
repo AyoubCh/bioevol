@@ -373,7 +373,8 @@ void Organism::compute_fitness() {
   for (int i = 0; i < Common::Metabolic_Error_Precision; i++)
     metabolic_error[i] = 0.0;
 
-  for (auto prot : protein_fitness_list_) { //.begin(); it != protein_fitness_list_.end(); it++) {
+  for (auto prot : protein_fitness_list_) 
+  { //.begin(); it != protein_fitness_list_.end(); it++) {
     int index = prot->value_*Common::Metabolic_Error_Precision;
 
     float concentration = prot->concentration_;
@@ -490,7 +491,6 @@ Organism* Organism::divide() {
 
 Organism::Organism(Organism* organism) {
   dna_ = new DNA(organism->dna_);
-
 
   for(auto prot : organism->protein_list_map_) {
     Protein* new_prot = new Protein(prot.second);

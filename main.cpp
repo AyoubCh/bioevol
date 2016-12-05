@@ -1,3 +1,5 @@
+
+
 #include <iostream>
 #include "src/World.h"
 #include "src/Common.h"
@@ -5,7 +7,9 @@
 
 using namespace std;
 
+
 int main(int args, char** argv) {
+
   printf("Init binding matrix\n");
   Common::init_binding_matrix(897685687);
 
@@ -26,4 +30,6 @@ int main(int args, char** argv) {
     printf("Run evolution\n");
     world->run_evolution();
   }
+
+    return 0;
 }

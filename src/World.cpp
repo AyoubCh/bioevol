@@ -6,6 +6,8 @@
 #include "DNA.h"
 #include "Organism.h"
 
+#define SFML_FOUND
+
 #ifdef SFML_FOUND
 #include "GraphicDisplay.h"
 #endif
@@ -231,7 +233,7 @@ void World::do_test(Organism* org){
 
     Organism* org_new = new Organism(new DNA(org->dna_));
     org_new->gridcell_ = grid_cell_[0];
-    org_new->mutate();
+    org_new->mutate(); // this is random
     org_new->init_organism();
     org_new->activate_pump();
     org_new->build_regulation_network();
@@ -285,6 +287,8 @@ void World::test_mutate() {
     //if (i%100==0) printf(".");
     i++;
   }
+
+  printf("\n");
 
   min_fitness_ = org->fitness_;
   max_fitness_ = org->fitness_;
