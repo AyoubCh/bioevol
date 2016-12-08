@@ -9,6 +9,7 @@
 #include "BP_Protein_Block.h"
 #include "BP_Pump_Block.h"
 #include "BP_Move_Block.h"
+//#include <mutex>
 
 class BP {
  public:
@@ -74,6 +75,8 @@ class BP {
 
 
     BP(BP* bp) {
+      cloned = false;
+      bp->cloned = false;
       type_ = bp->type_;
       binding_pattern_ = bp->binding_pattern_;
       concentration_ = bp->concentration_;
@@ -81,19 +84,46 @@ class BP {
       if (bp->protein_block_ != nullptr) {
         //protein_block_ = new BP_Protein_Block(bp->get_protein_block_());
         protein_block_ = bp->get_protein_block_();
+        protein_block_->referenced_by++;
       } else if (bp->pump_block_ != nullptr) {
         //pump_block_ = new BP_Pump_Block(bp->pump_block_);
          pump_block_ = bp->pump_block_;
+         pump_block_->referenced_by++;
       } else if (bp->move_block_ != nullptr) {
         //move_block_ = new BP_Move_Block(bp->move_block_);
         move_block_ = bp->move_block_;
+        move_block_->referenced_by++;
       }
     }
 
     ~BP() {
-      /*delete protein_block_;
-      delete pump_block_;
-      delete move_block_;*/
+        if(cloned){
+          delete protein_block_;
+          delete pump_block_;
+          delete move_block_;
+        } else {
+            if(protein_block_!=nullptr) {
+                //g_pages_mutex.lock();
+                protein_block_->referenced_by--;
+                //g_pages_mutex.unlock();
+                if( protein_block_->referenced_by == -1 )
+                    delete protein_block_;
+            }
+            if(pump_block_!=nullptr) {
+                //g_pages_mutex.lock();
+                pump_block_->referenced_by--;
+                //g_pages_mutex.unlock();
+                if( pump_block_->referenced_by == -1 )
+                    delete pump_block_;
+            }
+            if(move_block_!=nullptr) {
+                //g_pages_mutex.lock();
+                move_block_->referenced_by--;
+                //g_pages_mutex.unlock();
+                if( move_block_->referenced_by == -1 )
+                    delete move_block_;
+            }
+        }
     }
 
     int type_;
@@ -108,6 +138,8 @@ class BP {
 
 private :
     BP_Protein_Block* protein_block_ = nullptr;
+    bool cloned = true ;
+    //static std::mutex g_pages_mutex;
 };
 
 

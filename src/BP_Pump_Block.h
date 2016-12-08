@@ -33,6 +33,7 @@ class BP_Pump_Block {
     }
 
     std::vector<BP_Pump*> bp_pump_list_;
+    long referenced_by = 0;
 };
 
 

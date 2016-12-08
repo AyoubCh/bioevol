@@ -31,6 +31,7 @@ class BP_Protein_Block {
     }
 
     std::vector<BP_Protein*> bp_prot_list_;
+    long referenced_by = 0;
 };																																																										
 
 

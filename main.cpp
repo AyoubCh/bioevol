@@ -31,5 +31,7 @@ int main(int args, char** argv) {
     world->run_evolution();
   }
 
-    return 0;
+  //int d;
+  //scanf("%d",&d);
+  return 0;
 }
