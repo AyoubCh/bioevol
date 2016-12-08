@@ -3,7 +3,7 @@ QT -= gui
 
 CONFIG += c++11
 
-TARGET = BioEvolMdl
+TARGET = pdc_evol_model
 CONFIG += console
 CONFIG -= app_bundle
 
@@ -21,3 +21,6 @@ unix|win32: LIBS += -lsfml-system
 unix|win32: LIBS += -lsfml-window
 
 unix|win32: LIBS += -lsfml-graphics
+
+unix|win32: LIBS += -openmp
+

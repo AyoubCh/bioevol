@@ -6,7 +6,9 @@
 #include "DNA.h"
 #include "Organism.h"
 
-#define SFML_FOUND
+#include <omp.h>
+
+//#define SFML_FOUND
 
 #ifdef SFML_FOUND
 #include "GraphicDisplay.h"
@@ -228,6 +230,8 @@ void World::do_test(Organism* org){
   int equal = 0;
   
    // TEST MUTATE (100) / print every 10
+  //#pragma omp parallel shared(org,better,worse,equal)
+  #pragma omp for
   for (int i = 0; i < Common::Number_Evolution_Step;i++) {
     if (i%Common::Time_flush==0) printf("%d\n",i);
 
