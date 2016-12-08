@@ -231,7 +231,7 @@ void World::do_test(Organism* org){
   
    // TEST MUTATE (100) / print every 10
   //#pragma omp parallel shared(org,better,worse,equal)
-  #pragma omp for
+  #pragma omp for schedule(runtime)
   for (int i = 0; i < Common::Number_Evolution_Step;i++) {
     if (i%Common::Time_flush==0) printf("%d\n",i);
 
@@ -244,6 +244,7 @@ void World::do_test(Organism* org){
 
     for (int t = 0; t < Common::Number_Degradation_Step; t++)
       org_new->compute_protein_concentration();
+
 
     if (org_new->dying_or_not()) {
       death_++;
