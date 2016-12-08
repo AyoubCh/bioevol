@@ -13,7 +13,7 @@ class BP_Pump {
       start_range_ = start_range;
       end_range_ = end_range;
       speed_ = speed;
-    };
+    }
 
     BP_Pump(BP_Pump* bp_pump) {
       in_out_ = bp_pump->in_out_;

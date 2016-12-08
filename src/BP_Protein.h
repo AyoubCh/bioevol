@@ -23,7 +23,7 @@ class BP_Protein {
     BP_Protein(int type, int op) {
       type_ = type;
       op_ = op;
-    };
+    }
 
     BP_Protein(int type, float number) {
       type_  = type;

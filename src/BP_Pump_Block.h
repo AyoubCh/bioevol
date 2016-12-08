@@ -15,10 +15,16 @@ class BP_Pump_Block {
       for (auto pump : bp_prot->bp_pump_list_) {
         bp_pump_list_.push_back(new BP_Pump(pump));
       }
-    };
+    }
+
+    void clone(BP_Pump_Block* bp_prot) {
+        for (auto pump : bp_prot->bp_pump_list_) {
+          bp_pump_list_.push_back(new BP_Pump(pump));
+        }
+    }
 
     BP_Pump_Block() {
-    };
+    }
 
     ~BP_Pump_Block() {
       for (auto pump : bp_pump_list_) {

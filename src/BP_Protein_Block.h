@@ -13,15 +13,15 @@
 
 class BP_Protein_Block {
  public:
-    BP_Protein_Block(BP_Protein_Block* bp_prot) {
+    BP_Protein_Block(const BP_Protein_Block* bp_prot) {
       for (auto prot : bp_prot->bp_prot_list_) {
         bp_prot_list_.push_back(new BP_Protein(prot));
       }
-    };
+    }
 
     BP_Protein_Block() {
 
-    };
+    }
 
     ~BP_Protein_Block() {
       for (auto prot : bp_prot_list_) {

@@ -15,12 +15,12 @@ class DNA {
       for (auto bp : dna->bp_list_) {
         bp_list_.push_back(new BP(bp));
       }
-    }; // Clone
+    } // Clone
 
     DNA(GridCell* grid_cell); // Random one
     
     ~DNA() {
-      for (auto bp : bp_list_)
+     for (auto bp : bp_list_)
         delete bp;
       bp_list_.clear();
     }

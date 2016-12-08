@@ -49,8 +49,8 @@ void Organism::translate_protein() {
         float current_value = -1;
         int current_arith_op = -1;
 
-        for (auto it_k = (*it_j)->protein_block_->bp_prot_list_.begin();
-             it_k < (*it_j)->protein_block_->bp_prot_list_.end();
+        for (auto it_k = (*it_j)->get_protein_block_()->bp_prot_list_.begin();
+             it_k < (*it_j)->get_protein_block_()->bp_prot_list_.end();
              it_k++) {
           if ((*it_k)->type_ ==
                 (int) BP_Protein::BP_Protein_Type::ARITHMETIC_OPERATOR) {

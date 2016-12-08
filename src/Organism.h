@@ -19,9 +19,9 @@ class DNA;
 
 class Organism {
  public:
-    Organism(){};
+    Organism(){}
     Organism(Organism* organism);
-    Organism(DNA* dna) { dna_ = dna;};
+    Organism(DNA* dna) { dna_ = dna;}
     ~Organism();
 
     Organism* old = nullptr;
