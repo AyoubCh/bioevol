@@ -263,19 +263,24 @@ void World::do_test(Organism* org){
 void World::test_mutate() {
 
   float fitness = 0.0;
-  DNA* dna = nullptr;
+  //DNA* dna = nullptr;
   //DNA* dna = new DNA(grid_cell_[0]);
-  //Organism* org = nullptr;
-  Organism* org = new Organism();
-  org->gridcell_ = grid_cell_[0];
+  Organism* org = nullptr;
+  //Organism* org = new Organism();
+  //org->gridcell_ = grid_cell_[0];
   printf("Searching for a viable organism ");
 
   long i = 0;
   while (fitness <= 0.0) {
-    //delete org;
+    delete org;
     //dna = new DNA(grid_cell_[0]);
     //org = new Organism(dna);
-		org-> dna_ = new DNA(grid_cell_[0]);
+    /*if(org->dna_ != nullptr){
+        delete org->dna_;
+    }*/
+    //org-> dna_ = new DNA(grid_cell_[0]);
+    org = new Organism(new DNA(grid_cell_[0]));
+    org->gridcell_ = grid_cell_[0];
     org->init_organism();
     org->build_regulation_network();
     for (int t = 0; t < Common::Number_Degradation_Step; t++)
@@ -294,10 +299,6 @@ void World::test_mutate() {
   max_fitness_ = org->fitness_;
   
   death_ = 0;
-
-  int dna_size_larger = 0;
-  int dna_size_equal = 0;
-  int dna_size_smaller = 0;
 
   do_test(org);
   delete org;
