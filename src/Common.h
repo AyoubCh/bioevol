@@ -57,7 +57,7 @@ class Common {
 
     const static int Number_Degradation_Step = 5;//10;
     //const static int Number_Evolution_Step = 1000000;
-    const static int Number_Evolution_Step = 10000+1;
+    const static int Number_Evolution_Step = 1000+1;
 	const static int Time_flush = 10;
 };
 

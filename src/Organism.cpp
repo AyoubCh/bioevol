@@ -14,20 +14,62 @@ void Organism::init_organism() {
   translate_move();
 }
 
-void Organism::translate_RNA() {
+
+
+void Organism::translate_RNA_back() {
 
   RNA* current_rna = nullptr;
-  for (auto it = dna_->bp_list_.begin(); it != dna_->bp_list_.end(); it++) {
-    if ((*it)->type_ == (int)BP::BP_Type::START_RNA) {
-      current_rna = new RNA((*it)->binding_pattern_,
-                            (*it)->concentration_);
-    } else if ((*it)->type_ == (int)BP::BP_Type::END_RNA) {
-      if (current_rna != nullptr) {
+  //for (auto it = dna_->bp_list_.begin(); it != dna_->bp_list_.end(); it++)
+#pragma omp for
+//#pragma omp for schedule(runtime)
+  for( int i = 0; i < dna_->bp_list_.size(); i++)
+  {
+    BP** it = &(dna_->bp_list_[i]);
+    //RNA* current_rna = nullptr;
+    if ((*it)->type_ == (int)BP::BP_Type::START_RNA)
+    {
+      current_rna = new RNA((*it)->binding_pattern_, (*it)->concentration_);
+    }
+    else if ((*it)->type_ == (int)BP::BP_Type::END_RNA)
+    {
+      if (current_rna != nullptr)
+      {
         rna_list_.push_back(current_rna);
         current_rna = nullptr;
       }
-    } else if (current_rna != nullptr) {
+    }
+    else if (current_rna != nullptr)
+    {
       current_rna->bp_list_.push_back(new BP((*it)));
+    }
+  }
+}
+
+void Organism::translate_RNA() {
+
+  RNA* current_rna = nullptr;
+  //for (auto it = dna_->bp_list_.begin(); it != dna_->bp_list_.end(); it++)
+#pragma omp for
+//#pragma omp for schedule(runtime)
+  for( int i = 0; i < dna_->bp_list_.size(); i++)
+  {
+    BP** it = &(dna_->bp_list_[i]);
+    //RNA* current_rna = nullptr;
+    if ((*it)->type_ == (int)BP::BP_Type::START_RNA)
+    {
+      current_rna = new RNA((*it)->binding_pattern_, (*it)->concentration_);
+    }
+    else if (current_rna != nullptr)
+    {
+        if ((*it)->type_ == (int)BP::BP_Type::END_RNA)
+        {
+            rna_list_.push_back(current_rna);
+            current_rna = nullptr;
+        }
+        else
+        {
+          current_rna->bp_list_.push_back(new BP((*it)));
+        }
     }
   }
 }

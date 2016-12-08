@@ -54,6 +54,7 @@ class Organism {
 
     void init_organism();
     void translate_RNA();
+    void translate_RNA_back();
     void translate_protein();
     void build_regulation_network();
     void translate_pump();
