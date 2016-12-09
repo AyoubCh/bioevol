@@ -20,8 +20,8 @@ void Organism::translate_RNA_back() {
 
   RNA* current_rna = nullptr;
   //for (auto it = dna_->bp_list_.begin(); it != dna_->bp_list_.end(); it++)
-#pragma omp parallele for private(current_rna) schedule(runtime)
-//#pragma omp parallele for
+//#pragma omp parallele for private(current_rna) schedule(runtime)
+#pragma omp parallele for
 //#pragma omp for schedule(runtime)
   for( int i = 0; i < dna_->bp_list_.size(); i++)
   {
