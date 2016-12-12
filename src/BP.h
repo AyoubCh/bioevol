@@ -74,34 +74,47 @@ class BP {
     }
 
 
-    BP(BP* bp) {
-      cloned = false;
-      bp->cloned = false;
+    void BiP(BP* bp) {
+      //cloned = false;
+      //bp->cloned = false;
       type_ = bp->type_;
       binding_pattern_ = bp->binding_pattern_;
       concentration_ = bp->concentration_;
 
       if (bp->protein_block_ != nullptr) {
-        //protein_block_ = new BP_Protein_Block(bp->get_protein_block_());
-        protein_block_ = bp->get_protein_block_();
+        protein_block_ = new BP_Protein_Block(bp->get_protein_block_());
+        //protein_block_ = bp->get_protein_block_();
         protein_block_->referenced_by++;
       } else if (bp->pump_block_ != nullptr) {
-        //pump_block_ = new BP_Pump_Block(bp->pump_block_);
-         pump_block_ = bp->pump_block_;
+        pump_block_ = new BP_Pump_Block(bp->pump_block_);
+        // pump_block_ = bp->pump_block_;
          pump_block_->referenced_by++;
       } else if (bp->move_block_ != nullptr) {
-        //move_block_ = new BP_Move_Block(bp->move_block_);
-        move_block_ = bp->move_block_;
+        move_block_ = new BP_Move_Block(bp->move_block_);
+        //move_block_ = bp->move_block_;
         move_block_->referenced_by++;
       }
     }
 
+    BP* clone(){
+        //cloned = true;
+        referenced ++;
+        return this;
+    }
+
+    void del(){
+        if( referenced == 0)
+            return delete this;
+        else referenced --;
+    }
+
     ~BP() {
-        if(cloned){
+        //if(!cloned){
           delete protein_block_;
           delete pump_block_;
           delete move_block_;
-        } else {
+        //}
+        /*else {
             if(protein_block_!=nullptr) {
                 //g_pages_mutex.lock();
                 protein_block_->referenced_by--;
@@ -123,7 +136,7 @@ class BP {
                 if( move_block_->referenced_by == -1 )
                     delete move_block_;
             }
-        }
+        }*/
     }
 
     int type_;
@@ -136,9 +149,13 @@ class BP {
 
     BP_Protein_Block* get_protein_block_() const {return protein_block_;}
 
+    //bool cloned = false ;
+    long referenced =  0;
+
+
 private :
     BP_Protein_Block* protein_block_ = nullptr;
-    bool cloned = true ;
+
     //static std::mutex g_pages_mutex;
 };
 

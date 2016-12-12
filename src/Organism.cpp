@@ -6,6 +6,8 @@
 #include "DNA.h"
 #include "Common.h"
 
+#include <omp.h>
+
 
 void Organism::init_organism() {
   translate_RNA();
@@ -20,9 +22,7 @@ void Organism::translate_RNA_back() {
 
   RNA* current_rna = nullptr;
   //for (auto it = dna_->bp_list_.begin(); it != dna_->bp_list_.end(); it++)
-//#pragma omp parallele for private(current_rna) schedule(runtime)
-#pragma omp parallele for
-//#pragma omp for schedule(runtime)
+#pragma omp parallele for private(current_rna) schedule(runtime)
   for( int i = 0; i < dna_->bp_list_.size(); i++)
   {
     BP** it = &(dna_->bp_list_[i]);
@@ -41,7 +41,8 @@ void Organism::translate_RNA_back() {
     }
     else if (current_rna != nullptr)
     {
-      current_rna->bp_list_.push_back(new BP((*it)));
+      //current_rna->bp_list_.push_back(new BP((*it)));
+      current_rna->bp_list_.push_back((*it)->clone());
     }
   }
 }
@@ -49,9 +50,8 @@ void Organism::translate_RNA_back() {
 void Organism::translate_RNA() {
 
   RNA* current_rna = nullptr;
-  //for (auto it = dna_->bp_list_.begin(); it != dna_->bp_list_.end(); it++)
-#pragma omp for
-//#pragma omp for schedule(runtime)
+
+  #pragma omp  parallele for private(current_rna) schedule(runtime)
   for( int i = 0; i < dna_->bp_list_.size(); i++)
   {
     BP** it = &(dna_->bp_list_[i]);
@@ -69,7 +69,8 @@ void Organism::translate_RNA() {
         }
         else
         {
-          current_rna->bp_list_.push_back(new BP((*it)));
+          //current_rna->bp_list_.push_back(new BP((*it)));
+            current_rna->bp_list_.push_back((*it)->clone());
         }
     }
   }
@@ -501,7 +502,8 @@ void Organism::mutate() {
     }
 
     dna_->bp_list_.insert(dna_->bp_list_.begin()+where_to_duplicate,
-                          new BP(dna_->bp_list_[duplication_pos]));
+                          //new BP(dna_->bp_list_[duplication_pos]));
+                            (dna_->bp_list_[duplication_pos])->clone());
   }
 
 

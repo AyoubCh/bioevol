@@ -6,7 +6,7 @@
 #include "DNA.h"
 #include "Organism.h"
 
-#include <omp.h>
+//#include <omp.h>
 
 //#define SFML_FOUND
 
