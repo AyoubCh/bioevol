@@ -10,14 +10,15 @@ using namespace std;
 
 int main(int args, char** argv) {
 
-  printf("Init binding matrix\n");
+  
   Common::init_binding_matrix(897685687);
+  printf("Init binding matrix\n");
 
-  printf("Create World\n");
   World* world = new World(32, 32, 897986875);
+  printf("Create World\n");
 
-  printf("Initialize environment\n");
   world->init_environment();
+  printf("Initialize environment\n");
 
   bool test = false;
   if (args == 2 && !strcmp("-t", argv[1])) test = true;

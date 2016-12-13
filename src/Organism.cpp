@@ -2,6 +2,8 @@
 // Created by arrouan on 28/09/16.
 //
 
+#include <omp.h>
+
 #include "Organism.h"
 #include "DNA.h"
 #include "Common.h"
@@ -21,7 +23,7 @@ void Organism::translate_RNA_back() {
   RNA* current_rna = nullptr;
   //for (auto it = dna_->bp_list_.begin(); it != dna_->bp_list_.end(); it++)
 //#pragma omp parallele for private(current_rna) schedule(runtime)
-#pragma omp parallele for
+//#pragma omp parallele for
 //#pragma omp for schedule(runtime)
   for( int i = 0; i < dna_->bp_list_.size(); i++)
   {
@@ -49,16 +51,15 @@ void Organism::translate_RNA_back() {
 void Organism::translate_RNA() {
 
   RNA* current_rna = nullptr;
-  //for (auto it = dna_->bp_list_.begin(); it != dna_->bp_list_.end(); it++)
-#pragma omp for
-//#pragma omp for schedule(runtime)
+  
+  int packet_size = dna_->bp_list_.size()/omp_get_max_threads();
+
   for( int i = 0; i < dna_->bp_list_.size(); i++)
   {
     BP** it = &(dna_->bp_list_[i]);
-    //RNA* current_rna = nullptr;
     if ((*it)->type_ == (int)BP::BP_Type::START_RNA)
     {
-      current_rna = new RNA((*it)->binding_pattern_, (*it)->concentration_);
+		current_rna = new RNA((*it)->binding_pattern_, (*it)->concentration_);
     }
     else if (current_rna != nullptr)
     {
@@ -193,23 +194,40 @@ void Organism::translate_pump() {
 }
 
 void Organism::translate_move() {
-  bool within_move = false;
-
-  for ( auto it = rna_list_.begin(); it != rna_list_.end(); it++ ) {
-    for (auto it_j = (*it)->bp_list_.begin(); it_j < (*it)->bp_list_.end(); it_j++) {
-      if ((*it_j)->type_ ==
-          (int) BP::BP_Type::START_MOVE) {
+	
+	
+	int packet_size = Common::Number_Evolution_Step/omp_get_max_threads();
+	
+  //#pragma omp parallel for 
+  //for ( auto it = rna_list_.begin(); it != rna_list_.end(); it++ ) 
+  //{
+  for( int i = 0; i < rna_list_.size(); i++)
+  {
+    RNA** it = &(rna_list_[i]);
+	bool within_move = false;
+    for (auto it_j = (*it)->bp_list_.begin(); it_j < (*it)->bp_list_.end(); it_j++) 
+    {
+      if ((*it_j)->type_ == (int) BP::BP_Type::START_MOVE) 
+      {
         within_move = true;
-      } else if ((*it_j)->type_ ==
-                 (int) BP::BP_Type::END_MOVE) {
+      } 
+      else if ((*it_j)->type_ == (int) BP::BP_Type::END_MOVE) 
+      {
         within_move = false;
-      } else if (((*it_j)->type_ ==
-                  (int) BP::BP_Type::MOVE_BLOCK) && (within_move)) {
-        for (auto it_k=(*it_j)->move_block_->
-            bp_move_list_.begin(); it_k < (*it_j)->move_block_->
-            bp_move_list_.end(); it_k++) {
-          Move* move = new Move((*it_k)->distance_,(*it_k)->retry_);
-          move_list_.push_back(move);
+      } 
+      else if (((*it_j)->type_ == (int) BP::BP_Type::MOVE_BLOCK) && (within_move)) 
+      {
+		//#pragma omp parallel for shared(it_j)
+        for( int j=0; j < (*it_j)->move_block_-> bp_move_list_.size();j++)
+        {
+		  BP_Move* it_k = (*it_j)->move_block_-> bp_move_list_[j];
+          Move* move = new Move( it_k->distance_, it_k ->retry_);
+          
+          //#pragma omp critical 
+          {
+			move_list_.push_back(move);
+			//printf("-> %d \n",move->distance_);
+		   }
         }
       }
     }
@@ -546,7 +564,7 @@ Organism::~Organism() {
   for (auto rna : rna_list_)
     delete rna;
 
-  delete dna_;
+  
 
 
   rna_influence_.clear();
@@ -572,4 +590,7 @@ Organism::~Organism() {
     delete move;
   }
   move_list_.clear();
+  
+   #pragma omp critical
+  delete dna_;
 }

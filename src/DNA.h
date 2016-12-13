@@ -20,9 +20,10 @@ class DNA {
     DNA(GridCell* grid_cell); // Random one
     
     ~DNA() {
-     for (auto bp : bp_list_)
-        delete bp;
-      bp_list_.clear();
+		 for (auto bp : bp_list_) {
+			delete bp;
+		 }
+		  bp_list_.clear();
     }
 
     std::vector<BP*> bp_list_;

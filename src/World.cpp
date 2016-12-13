@@ -79,16 +79,23 @@ void World::random_population() {
 void World::init_environment() {
   float env[Common::Metabolic_Error_Precision];
   std::uniform_real_distribution<float> dis(0,1);
+  
+  int packet_size = Common::Metabolic_Error_Precision/omp_get_max_threads();
+  
+  #pragma omp parallel for schedule(static,packet_size)
   for (int i = 0; i < Common::Metabolic_Error_Precision; i++)
     env[i] = dis(global_gen_);
-
-  for (int i = 0; i < width_; i++) {
-    for (int j = 0; j < height_; j++) {
-      for (int k = 0; k < Common::Metabolic_Error_Precision; k++) {
-        grid_cell_[i * width_ + j]->environment_target[k] = env[k];
-      }
-    }
-  }
+   
+	#pragma omp parallel for 
+	for (int i = 0; i < width_; i++) {
+		#pragma omp parallel for
+		for (int j = 0; j < height_; j++) {
+			#pragma omp parallel for
+			for (int k = 0; k < Common::Metabolic_Error_Precision; k++) {
+				grid_cell_[i * width_ + j]->environment_target[k] = env[k];
+			}
+		}
+	}
 
 }
 
@@ -229,38 +236,54 @@ void World::do_test(Organism* org){
   int worse = 0;
   int equal = 0;
   
-   // TEST MUTATE (100) / print every 10
-  //#pragma omp parallel shared(org,better,worse,equal)
-  #pragma omp for schedule(runtime)
+   Organism* org_new;
+  
+  int packet_size = Common::Number_Evolution_Step/omp_get_max_threads();
+  
+  int packet_size_in = Common::Number_Degradation_Step/omp_get_max_threads();
+  
+#pragma omp parallel shared(org,better,worse,equal) private(org_new)
+{ 
+  #pragma omp for schedule (static,packet_size)
   for (int i = 0; i < Common::Number_Evolution_Step;i++) {
     if (i%Common::Time_flush==0) printf("%d\n",i);
 
-    Organism* org_new = new Organism(new DNA(org->dna_));
+    //Organism* 
+    org_new = new Organism(new DNA(org->dna_));
     org_new->gridcell_ = grid_cell_[0];
     org_new->mutate(); // this is random
     org_new->init_organism();
     org_new->activate_pump();
     org_new->build_regulation_network();
 
-    for (int t = 0; t < Common::Number_Degradation_Step; t++)
-      org_new->compute_protein_concentration();
-
+	#pragma omp parallel shared(org_new)
+    { 
+		#pragma omp for schedule (static,packet_size_in)
+		for (int t = 0; t < Common::Number_Degradation_Step; t++)
+		  org_new->compute_protein_concentration();
+	}
 
     if (org_new->dying_or_not()) {
+	  #pragma omp critical
       death_++;
     }
 
     org_new->compute_fitness();
 
-    if (org->fitness_ == org_new->fitness_)
+    if (org->fitness_ == org_new->fitness_){
+	  #pragma omp critical
       equal++;
-    else if (org->fitness_ > org_new->fitness_)
+    } else if (org->fitness_ > org_new->fitness_) {
+      #pragma omp critical
       worse++;
-    else if (org->fitness_ < org_new->fitness_)
+    } else if (org->fitness_ < org_new->fitness_) {
+      #pragma omp critical
       better++;
+    }
 
-    delete org_new;
+	delete org_new;
   }
+}
 
   printf("Death %d -- Worse %d -- Better %d -- Equal %d\n",death_,worse,better,equal);
 }
@@ -273,7 +296,7 @@ void World::test_mutate() {
   Organism* org = nullptr;
   //Organism* org = new Organism();
   //org->gridcell_ = grid_cell_[0];
-  printf("Searching for a viable organism ");
+  printf("Searching for a viable organism \n");
 
   long i = 0;
   while (fitness <= 0.0) {

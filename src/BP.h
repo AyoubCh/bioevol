@@ -84,18 +84,23 @@ class BP {
       if (bp->protein_block_ != nullptr) {
         //protein_block_ = new BP_Protein_Block(bp->get_protein_block_());
         protein_block_ = bp->get_protein_block_();
+        //#pragma omp critical
         protein_block_->referenced_by++;
       } else if (bp->pump_block_ != nullptr) {
         //pump_block_ = new BP_Pump_Block(bp->pump_block_);
          pump_block_ = bp->pump_block_;
+         //#pragma omp critical
          pump_block_->referenced_by++;
       } else if (bp->move_block_ != nullptr) {
         //move_block_ = new BP_Move_Block(bp->move_block_);
         move_block_ = bp->move_block_;
+        //#pragma omp critical
         move_block_->referenced_by++;
       }
     }
 
+
+	
     ~BP() {
         if(cloned){
           delete protein_block_;
@@ -104,6 +109,7 @@ class BP {
         } else {
             if(protein_block_!=nullptr) {
                 //g_pages_mutex.lock();
+                //#pragma omp critical
                 protein_block_->referenced_by--;
                 //g_pages_mutex.unlock();
                 if( protein_block_->referenced_by == -1 )
@@ -111,6 +117,7 @@ class BP {
             }
             if(pump_block_!=nullptr) {
                 //g_pages_mutex.lock();
+                //#pragma omp critical
                 pump_block_->referenced_by--;
                 //g_pages_mutex.unlock();
                 if( pump_block_->referenced_by == -1 )
@@ -118,6 +125,7 @@ class BP {
             }
             if(move_block_!=nullptr) {
                 //g_pages_mutex.lock();
+                //#pragma omp critical
                 move_block_->referenced_by--;
                 //g_pages_mutex.unlock();
                 if( move_block_->referenced_by == -1 )
