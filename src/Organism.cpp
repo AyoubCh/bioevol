@@ -550,7 +550,6 @@ Organism::~Organism() {
 
   delete dna_;
 
-
   rna_influence_.clear();
   rna_produce_protein_.clear();
 

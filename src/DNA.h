@@ -24,7 +24,7 @@ class DNA {
          for (auto bp : bp_list_)
          {
            //delete bp;
-             bp-> del();
+           bp-> del();
          }
          bp_list_.clear();
     }

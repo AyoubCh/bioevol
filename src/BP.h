@@ -10,6 +10,7 @@
 #include "BP_Pump_Block.h"
 #include "BP_Move_Block.h"
 //#include <mutex>
+#include <cassert>
 
 class BP {
  public:
@@ -30,7 +31,7 @@ class BP {
     /**
      * Generic constructor (i.e. BP without args)
      */
-    BP(int type) { type_ = type; }
+    BP(int type) { type_ = type;}
 
     /**
      * Constructor for BP Protein Block
@@ -73,31 +74,7 @@ class BP {
       binding_pattern_ = binding_pattern;
     }
 
-
-    void BiP(BP* bp) {
-      //cloned = false;
-      //bp->cloned = false;
-      type_ = bp->type_;
-      binding_pattern_ = bp->binding_pattern_;
-      concentration_ = bp->concentration_;
-
-      if (bp->protein_block_ != nullptr) {
-        protein_block_ = new BP_Protein_Block(bp->get_protein_block_());
-        //protein_block_ = bp->get_protein_block_();
-        protein_block_->referenced_by++;
-      } else if (bp->pump_block_ != nullptr) {
-        pump_block_ = new BP_Pump_Block(bp->pump_block_);
-        // pump_block_ = bp->pump_block_;
-         pump_block_->referenced_by++;
-      } else if (bp->move_block_ != nullptr) {
-        move_block_ = new BP_Move_Block(bp->move_block_);
-        //move_block_ = bp->move_block_;
-        move_block_->referenced_by++;
-      }
-    }
-
     BP* clone(){
-        //cloned = true;
         referenced ++;
         return this;
     }
@@ -106,37 +83,14 @@ class BP {
         if( referenced == 0)
             return delete this;
         else referenced --;
+        assert(referenced>=0);
     }
 
     ~BP() {
-        //if(!cloned){
-          delete protein_block_;
-          delete pump_block_;
-          delete move_block_;
-        //}
-        /*else {
-            if(protein_block_!=nullptr) {
-                //g_pages_mutex.lock();
-                protein_block_->referenced_by--;
-                //g_pages_mutex.unlock();
-                if( protein_block_->referenced_by == -1 )
-                    delete protein_block_;
-            }
-            if(pump_block_!=nullptr) {
-                //g_pages_mutex.lock();
-                pump_block_->referenced_by--;
-                //g_pages_mutex.unlock();
-                if( pump_block_->referenced_by == -1 )
-                    delete pump_block_;
-            }
-            if(move_block_!=nullptr) {
-                //g_pages_mutex.lock();
-                move_block_->referenced_by--;
-                //g_pages_mutex.unlock();
-                if( move_block_->referenced_by == -1 )
-                    delete move_block_;
-            }
-        }*/
+      assert(referenced==0);
+      delete protein_block_;
+      delete pump_block_;
+      delete move_block_;
     }
 
     int type_;
@@ -149,7 +103,6 @@ class BP {
 
     BP_Protein_Block* get_protein_block_() const {return protein_block_;}
 
-    //bool cloned = false ;
     long referenced =  0;
 
 

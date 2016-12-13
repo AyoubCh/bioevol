@@ -39,7 +39,7 @@ class RNA {
     ~RNA() {
       for (auto bp : bp_list_) {
         //delete bp;
-           bp-> del();
+        bp-> del();
       }
     }
 
