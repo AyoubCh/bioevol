@@ -27,6 +27,10 @@ class BP {
         END_MOVE = 9,
         MOVE_BLOCK = 10
     };
+    
+    enum class TypeOP{
+		UP,DOWN,READ
+	};
 
     /**
      * Generic constructor (i.e. BP without args)
@@ -75,18 +79,34 @@ class BP {
     }
 
     BP* clone(){
-        referenced ++;
+		editReferenced(TypeOP::UP);
         return this;
     }
 
 
     void del(){
-        if( referenced == 0)
+        if( editReferenced(TypeOP::READ) == 0)
             return delete this;
-        else referenced --;
-        assert(referenced>=0);
+        else {
+			editReferenced(TypeOP::DOWN);
+		}
+        assert(editReferenced(TypeOP::READ)>=0);
     }
 
+	long editReferenced(TypeOP op){
+		long value;
+		#pragma omp critical 
+		{
+			if(op==TypeOP::UP){
+				referenced ++;
+			} else if(op==TypeOP::DOWN) {
+				referenced --;
+			} else {
+				value = referenced;
+			}
+		}
+		return value;
+	}
 
 	
     ~BP() {

@@ -281,7 +281,6 @@ void World::do_test(Organism* org){
       better++;
     }
 
-	#pragma omp critical
 	delete org_new;
   }
 }
