@@ -8,6 +8,8 @@
 #include "DNA.h"
 #include "Common.h"
 
+#include <omp.h>
+
 
 void Organism::init_organism() {
   translate_RNA();
@@ -22,9 +24,11 @@ void Organism::translate_RNA_back() {
 
   RNA* current_rna = nullptr;
   //for (auto it = dna_->bp_list_.begin(); it != dna_->bp_list_.end(); it++)
+
 //#pragma omp parallele for private(current_rna) schedule(runtime)
 //#pragma omp parallele for
 //#pragma omp for schedule(runtime)
+
   for( int i = 0; i < dna_->bp_list_.size(); i++)
   {
     BP** it = &(dna_->bp_list_[i]);
@@ -43,7 +47,8 @@ void Organism::translate_RNA_back() {
     }
     else if (current_rna != nullptr)
     {
-      current_rna->bp_list_.push_back(new BP((*it)));
+      //current_rna->bp_list_.push_back(new BP((*it)));
+      current_rna->bp_list_.push_back((*it)->clone());
     }
   }
 }
@@ -52,7 +57,7 @@ void Organism::translate_RNA() {
 
   RNA* current_rna = nullptr;
   
-  int packet_size = dna_->bp_list_.size()/omp_get_max_threads();
+  //int packet_size = dna_->bp_list_.size()/omp_get_max_threads();
 
   for( int i = 0; i < dna_->bp_list_.size(); i++)
   {
@@ -70,7 +75,8 @@ void Organism::translate_RNA() {
         }
         else
         {
-          current_rna->bp_list_.push_back(new BP((*it)));
+          //current_rna->bp_list_.push_back(new BP((*it)));
+            current_rna->bp_list_.push_back((*it)->clone());
         }
     }
   }
@@ -196,7 +202,7 @@ void Organism::translate_pump() {
 void Organism::translate_move() {
 	
 	
-	int packet_size = Common::Number_Evolution_Step/omp_get_max_threads();
+	//int packet_size = Common::Number_Evolution_Step/omp_get_max_threads();
 	
   //#pragma omp parallel for 
   //for ( auto it = rna_list_.begin(); it != rna_list_.end(); it++ ) 
@@ -519,7 +525,8 @@ void Organism::mutate() {
     }
 
     dna_->bp_list_.insert(dna_->bp_list_.begin()+where_to_duplicate,
-                          new BP(dna_->bp_list_[duplication_pos]));
+                          //new BP(dna_->bp_list_[duplication_pos]));
+                            (dna_->bp_list_[duplication_pos])->clone());
   }
 
 
@@ -566,7 +573,6 @@ Organism::~Organism() {
 
   
 
-
   rna_influence_.clear();
   rna_produce_protein_.clear();
 
@@ -591,6 +597,6 @@ Organism::~Organism() {
   }
   move_list_.clear();
   
-   #pragma omp critical
+  //#pragma omp critical
   delete dna_;
 }

@@ -25,8 +25,10 @@ class RNA {
      * Cloning constructor
      */
     RNA(RNA* rna) {
+
       for (auto rna_l : rna->bp_list_) {
-        bp_list_.push_back(new BP(rna_l));
+        //bp_list_.push_back(new BP(rna_l));
+         bp_list_.push_back(rna_l->clone());
       }
 
       binding_pattern_ = rna->binding_pattern_;
@@ -36,7 +38,8 @@ class RNA {
 
     ~RNA() {
       for (auto bp : bp_list_) {
-        delete bp;
+        //delete bp;
+        bp-> del();
       }
     }
 
@@ -45,6 +48,7 @@ class RNA {
     float binding_pattern_;
     float concentration_base_;
     float current_concentration_;
+
 };
 
 

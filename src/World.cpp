@@ -80,9 +80,9 @@ void World::init_environment() {
   float env[Common::Metabolic_Error_Precision];
   std::uniform_real_distribution<float> dis(0,1);
   
-  int packet_size = Common::Metabolic_Error_Precision/omp_get_max_threads();
+  //int packet_size = Common::Metabolic_Error_Precision/omp_get_max_threads();
   
-  #pragma omp parallel for schedule(static,packet_size)
+  #pragma omp parallel for //schedule(static,packet_size)
   for (int i = 0; i < Common::Metabolic_Error_Precision; i++)
     env[i] = dis(global_gen_);
    
@@ -236,19 +236,19 @@ void World::do_test(Organism* org){
   int worse = 0;
   int equal = 0;
   
-   Organism* org_new;
+   //Organism* org_new;
   
-  int packet_size = Common::Number_Evolution_Step/omp_get_max_threads();
+  //int packet_size = Common::Number_Evolution_Step/omp_get_max_threads();
   
-  int packet_size_in = Common::Number_Degradation_Step/omp_get_max_threads();
+  //int packet_size_in = Common::Number_Degradation_Step/omp_get_max_threads();
   
-#pragma omp parallel shared(org,better,worse,equal) private(org_new)
+#pragma omp parallel shared(org,better,worse,equal) //private(org_new)
 { 
-  #pragma omp for schedule (static,packet_size)
+  #pragma omp for //schedule (static,packet_size)
   for (int i = 0; i < Common::Number_Evolution_Step;i++) {
     if (i%Common::Time_flush==0) printf("%d\n",i);
 
-    //Organism* 
+    Organism* 
     org_new = new Organism(new DNA(org->dna_));
     org_new->gridcell_ = grid_cell_[0];
     org_new->mutate(); // this is random
@@ -258,7 +258,7 @@ void World::do_test(Organism* org){
 
 	#pragma omp parallel shared(org_new)
     { 
-		#pragma omp for schedule (static,packet_size_in)
+		#pragma omp for //schedule (static,packet_size_in)
 		for (int t = 0; t < Common::Number_Degradation_Step; t++)
 		  org_new->compute_protein_concentration();
 	}
@@ -281,6 +281,7 @@ void World::do_test(Organism* org){
       better++;
     }
 
+	#pragma omp critical
 	delete org_new;
   }
 }

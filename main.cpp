@@ -1,5 +1,4 @@
 
-
 #include <iostream>
 #include "src/World.h"
 #include "src/Common.h"
@@ -31,6 +30,7 @@ int main(int args, char** argv) {
     printf("Run evolution\n");
     world->run_evolution();
   }
+
 
   //int d;
   //scanf("%d",&d);
