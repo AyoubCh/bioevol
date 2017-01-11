@@ -235,6 +235,7 @@ void World::do_test(Organism* org){
   int better = 0;
   int worse = 0;
   int equal = 0;
+  int death = 0;
   
    //Organism* org_new;
   
@@ -242,9 +243,9 @@ void World::do_test(Organism* org){
   
   //int packet_size_in = Common::Number_Degradation_Step/omp_get_max_threads();
   
-#pragma omp parallel shared(org,better,worse,equal) //private(org_new)
+//#pragma omp parallel //shared(org,better,worse,equal,death) //private(org_new)
 { 
-  #pragma omp for //schedule (static,packet_size)
+  #pragma omp parallel for reduction(+:death) reduction(+:worse) reduction(+:equal) reduction(+:better)//schedule (static,packet_size)
   for (int i = 0; i < Common::Number_Evolution_Step;i++) {
     if (i%Common::Time_flush==0) printf("%d\n",i);
 
@@ -264,28 +265,35 @@ void World::do_test(Organism* org){
 	}
 
     if (org_new->dying_or_not()) {
-	  #pragma omp critical
-      death_++;
+      //#pragma omp critical
+      //#pragma omp atomic
+      //death_++;
+        death++;
     }
 
     org_new->compute_fitness();
 
     if (org->fitness_ == org_new->fitness_){
-	  #pragma omp critical
+      //#pragma omp critical
+      //#pragma omp atomic
       equal++;
     } else if (org->fitness_ > org_new->fitness_) {
-      #pragma omp critical
+      //#pragma omp critical
+      //#pragma omp atomic
       worse++;
     } else if (org->fitness_ < org_new->fitness_) {
-      #pragma omp critical
+      //#pragma omp critical
+      //#pragma omp atomic
       better++;
     }
 
 	delete org_new;
   }
 }
+  death_+=death;
+  int all = death + worse + better + equal ;
 
-  printf("Death %d -- Worse %d -- Better %d -- Equal %d\n",death_,worse,better,equal);
+  printf("Death %d -- Worse %d -- Better %d -- Equal %d == All %d\n",death_,worse,better,equal,all);
 }
 
 void World::test_mutate() {

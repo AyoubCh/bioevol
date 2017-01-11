@@ -14,7 +14,7 @@
 
 class BP {
  public:
-    enum class BP_Type {
+    enum  BP_Type {
         START_RNA = 0,
         END_RNA = 1,
         START_PROTEIN = 2,
@@ -95,7 +95,7 @@ class BP {
 
 	long editReferenced(TypeOP op){
 		long value;
-		#pragma omp critical 
+        #pragma omp critical
 		{
 			if(op==TypeOP::UP){
 				referenced ++;
@@ -131,6 +131,7 @@ class BP {
 
 private :
     BP_Protein_Block* protein_block_ = nullptr;
+
 
     //static std::mutex g_pages_mutex;
 };
