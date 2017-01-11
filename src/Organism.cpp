@@ -273,7 +273,10 @@ void Organism::compute_next_step() {
 
 
 void Organism::activate_pump() {
-  for (auto it = pump_list_.begin(); it != pump_list_.end(); it++) {
+
+    #pragma omp critical
+    {
+        for (auto it = pump_list_.begin(); it != pump_list_.end(); it++) {
     if ((*it)->in_out_) {
       for (auto prot : protein_list_map_) {
         if ((*it)->start_range_ >= prot.second->value_ &&
@@ -316,7 +319,8 @@ void Organism::activate_pump() {
       }
     }
   }
-}
+    }
+ }
 
 
 
