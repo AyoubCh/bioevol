@@ -95,7 +95,7 @@ class BP {
 
 	long editReferenced(TypeOP op){
 		long value;
-        #pragma omp critical
+        #pragma omp critical(bp_reference)
 		{
 			if(op==TypeOP::UP){
 				referenced ++;

@@ -29,10 +29,32 @@ class Protein {
       concentration_ = prot->concentration_;
     }
 
+
+
+    float concentration_up(float edit = 0){
+        float value;
+        #pragma omp critical(concentration)
+        {
+            value = concentration_ += edit;
+        }
+        return value;
+    }
+
+    void set_concentration(float edit){
+        #pragma omp critical(concentration)
+        {
+            concentration_ = edit;
+        }
+    }
+
     int type_ = -1;
     float binding_pattern_ = -1;
     float value_ = -1;
-    float concentration_ = -1;
+
+    float get_value(){ return value_;}
+
+private :
+     float concentration_ = -1;
 };
 
 

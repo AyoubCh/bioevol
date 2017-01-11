@@ -19,7 +19,7 @@ class GridCell {
       x_=x; y_=y;
       float_gen_.seed(seed);
 
-    };
+    }
 
     World* world_;
     std::unordered_map<float,Protein*> protein_list_map_;

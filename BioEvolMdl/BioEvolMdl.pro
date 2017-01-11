@@ -22,5 +22,5 @@ unix|win32: LIBS += -lsfml-window
 
 unix|win32: LIBS += -lsfml-graphics
 
-unix|win32: LIBS += -openmp
+unix|win32: LIBS += -fopenmp
 

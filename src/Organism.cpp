@@ -144,7 +144,7 @@ void Organism::translate_protein() {
         }
 
         Protein* prot = new Protein(type,binding_pattern,current_value);
-        prot->concentration_ = (*it)->concentration_base_;
+        prot->set_concentration( (*it)->concentration_base_);
 
 
 
@@ -164,7 +164,7 @@ void Organism::translate_protein() {
 
           rna_produce_protein_[rna_id][current_value] = prot;
         } else {
-          protein_list_map_[current_value]->concentration_+=(*it)->concentration_base_;
+          protein_list_map_[current_value]->concentration_up((*it)->concentration_base_);
           delete prot;
           rna_produce_protein_[rna_id][current_value] = protein_list_map_[current_value];
         }
@@ -274,7 +274,7 @@ void Organism::compute_next_step() {
 
 void Organism::activate_pump() {
 
-    #pragma omp critical
+    //#pragma omp critical
     {
         for (auto it = pump_list_.begin(); it != pump_list_.end(); it++) {
     if ((*it)->in_out_) {
@@ -282,18 +282,18 @@ void Organism::activate_pump() {
         if ((*it)->start_range_ >= prot.second->value_ &&
             (*it)->end_range_ <= prot.second->value_) {
           float remove =
-              prot.second->concentration_*((*it)->speed_/100);
-          prot.second->concentration_-=remove;
+              prot.second->concentration_up()*((*it)->speed_/100);
+          prot.second->concentration_up(-1*remove);
           if ( gridcell_->protein_list_map_.find(prot.second->value_)
                == gridcell_->protein_list_map_.end() ) {
             Protein* prot_n = new Protein(prot.second->type_,
                                         prot.second->binding_pattern_,
                                           prot.second->value_);
-            prot_n->concentration_ = remove;
+            prot_n->set_concentration(remove);
             gridcell_->protein_list_map_[prot.second->value_] = prot_n;
           } else {
             gridcell_->protein_list_map_[prot.second->value_]
-                ->concentration_ += remove;
+                ->concentration_up( remove);
           }
         }
       }
@@ -302,18 +302,18 @@ void Organism::activate_pump() {
         if ((*it)->start_range_ >= prot.first &&
             (*it)->end_range_ <= prot.first) {
           float remove =
-              prot.second->concentration_*((*it)->speed_/100);
-          prot.second->concentration_-=remove;
+              prot.second->concentration_up()*((*it)->speed_/100);
+          prot.second->concentration_up(-remove);
           if ( protein_list_map_.find(prot.first)
                == protein_list_map_.end() ) {
             Protein* prot_n = new Protein(prot.second->type_,
                                           prot.second->binding_pattern_,
                                           prot.second->value_);
-            prot_n->concentration_ = remove;
+            prot_n->set_concentration(remove);
             protein_list_map_[prot_n->value_] = prot_n;
           } else {
             protein_list_map_[prot.first]
-                ->concentration_ += remove;
+                ->concentration_up( remove );
           }
         }
       }
@@ -330,9 +330,9 @@ void Organism::compute_protein_concentration() {
     float delta_pos = 0, delta_neg = 0;
     for (auto prot : rna_influence_[rna_id]) {
       if (prot.second > 0)
-        delta_pos += prot.second * protein_list_map_[prot.first]->concentration_;
+        delta_pos += prot.second * protein_list_map_[prot.first]->concentration_up();
       else
-        delta_neg -= prot.second * protein_list_map_[prot.first]->concentration_;
+        delta_neg -= prot.second * protein_list_map_[prot.first]->concentration_up();
     }
 
     float delta_pos_pow_n = pow(delta_pos,Common::hill_shape_n);
@@ -360,10 +360,10 @@ void Organism::compute_protein_concentration() {
   }
 
   for (auto delta : delta_concentration) {
-    delta.second -= Common::Protein_Degradation_Rate * protein_list_map_[delta.first]->concentration_;
+    delta.second -= Common::Protein_Degradation_Rate * protein_list_map_[delta.first]->concentration_up();
     delta.second *= 1/(Common::Protein_Degradation_Step);
 
-    protein_list_map_[delta.first]->concentration_+=delta.second;
+    protein_list_map_[delta.first]->concentration_up(delta.second);
   }
 }
 
@@ -371,10 +371,10 @@ bool Organism::dying_or_not() {
   // Compute if dying or not
   double concentration_sum = 0;
   for (auto prot : protein_fitness_list_) {
-    concentration_sum+=prot->concentration_;
+    concentration_sum+=prot->concentration_up();
   }
   for (auto prot : protein_TF_list_) {
-    concentration_sum+=prot->concentration_;
+    concentration_sum+=prot->concentration_up();
   }
 
   if (concentration_sum > 10.0 && concentration_sum <= 0.0) {
@@ -384,11 +384,11 @@ bool Organism::dying_or_not() {
   double poison=0,antipoison=0;
 
   for (auto prot : protein_poison_list_) {
-    poison+=prot->concentration_;
+    poison+=prot->concentration_up();
   }
 
   for (auto prot : protein_antipoison_list_) {
-    antipoison+=prot->concentration_;
+    antipoison+=prot->concentration_up();
   }
 
   if (poison-antipoison>0.1) {
@@ -448,7 +448,7 @@ void Organism::compute_fitness() {
   { //.begin(); it != protein_fitness_list_.end(); it++) {
     int index = prot->value_*Common::Metabolic_Error_Precision;
 
-    float concentration = prot->concentration_;
+    float concentration = prot->concentration_up();
 
     for (int j = index - Common::Metabolic_Error_Protein_Spray;
         j <= index + Common::Metabolic_Error_Protein_Spray; j++) {
@@ -566,8 +566,8 @@ Organism::Organism(Organism* organism) {
 
   for(auto prot : organism->protein_list_map_) {
     Protein* new_prot = new Protein(prot.second);
-    new_prot->concentration_ = new_prot->concentration_/2;
-    prot.second->concentration_ = prot.second->concentration_/2;
+    new_prot->set_concentration(new_prot->concentration_up()/2);
+    prot.second->set_concentration( prot.second->concentration_up()/2);
   }
 }
 
