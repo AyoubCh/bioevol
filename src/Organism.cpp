@@ -25,7 +25,7 @@ void Organism::translate_RNA_back() {
   RNA* current_rna = nullptr;
   //for (auto it = dna_->bp_list_.begin(); it != dna_->bp_list_.end(); it++)
 
-//#pragma omp parallele for private(current_rna) schedule(runtime)
+#pragma omp parallele for private(current_rna) schedule(runtime)
 //#pragma omp parallele for
 //#pragma omp for schedule(runtime)
 
@@ -274,7 +274,7 @@ void Organism::compute_next_step() {
 
 void Organism::activate_pump() {
 
-    //#pragma omp critical
+    #pragma omp critical(activate_pump)
     {
         for (auto it = pump_list_.begin(); it != pump_list_.end(); it++) {
     if ((*it)->in_out_) {
