@@ -257,9 +257,9 @@ void World::do_test(Organism* org){
     org_new->activate_pump();
     org_new->build_regulation_network();
 
-	#pragma omp parallel shared(org_new)
+	//#pragma omp parallel shared(org_new)
     { 
-		#pragma omp for //schedule (static,packet_size_in)
+		//#pragma omp for //schedule (static,packet_size_in)
 		for (int t = 0; t < Common::Number_Degradation_Step; t++)
 		  org_new->compute_protein_concentration();
 	}
