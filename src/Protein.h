@@ -35,7 +35,8 @@ class Protein {
         float value;
         #pragma omp critical(concentration)
         {
-            value = concentration_ += edit;
+            concentration_ += edit;
+            value = concentration_;
         }
         return value;
     }

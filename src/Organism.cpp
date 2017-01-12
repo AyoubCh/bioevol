@@ -284,39 +284,46 @@ void Organism::activate_pump() {
           float remove =
               prot.second->concentration_up()*((*it)->speed_/100);
           prot.second->concentration_up(-1*remove);
-          if ( gridcell_->protein_list_map_.find(prot.second->value_)
-               == gridcell_->protein_list_map_.end() ) {
-            Protein* prot_n = new Protein(prot.second->type_,
-                                        prot.second->binding_pattern_,
-                                          prot.second->value_);
-            prot_n->set_concentration(remove);
-            gridcell_->protein_list_map_[prot.second->value_] = prot_n;
-          } else {
-            gridcell_->protein_list_map_[prot.second->value_]
-                ->concentration_up( remove);
+
+          #pragma omp critical
+          {
+              if ( gridcell_->protein_list_map_.find(prot.second->value_)
+                   == gridcell_->protein_list_map_.end() ) {
+                Protein* prot_n = new Protein(prot.second->type_,
+                                            prot.second->binding_pattern_,
+                                              prot.second->value_);
+                prot_n->set_concentration(remove);
+                gridcell_->protein_list_map_[prot.second->value_] = prot_n;
+              } else {
+                gridcell_->protein_list_map_[prot.second->value_]
+                    ->concentration_up( remove);
+              }
           }
         }
       }
     } else {
-      for (auto prot : gridcell_->protein_list_map_) {
-        if ((*it)->start_range_ >= prot.first &&
-            (*it)->end_range_ <= prot.first) {
-          float remove =
-              prot.second->concentration_up()*((*it)->speed_/100);
-          prot.second->concentration_up(-remove);
-          if ( protein_list_map_.find(prot.first)
-               == protein_list_map_.end() ) {
-            Protein* prot_n = new Protein(prot.second->type_,
-                                          prot.second->binding_pattern_,
-                                          prot.second->value_);
-            prot_n->set_concentration(remove);
-            protein_list_map_[prot_n->value_] = prot_n;
-          } else {
-            protein_list_map_[prot.first]
-                ->concentration_up( remove );
+        #pragma omp critical
+        {
+          for (auto prot : gridcell_->protein_list_map_) {
+            if ((*it)->start_range_ >= prot.first &&
+                (*it)->end_range_ <= prot.first) {
+              float remove =
+                  prot.second->concentration_up()*((*it)->speed_/100);
+              prot.second->concentration_up(-remove);
+              if ( protein_list_map_.find(prot.first)
+                   == protein_list_map_.end() ) {
+                Protein* prot_n = new Protein(prot.second->type_,
+                                              prot.second->binding_pattern_,
+                                              prot.second->value_);
+                prot_n->set_concentration(remove);
+                protein_list_map_[prot_n->value_] = prot_n;
+              } else {
+                protein_list_map_[prot.first]
+                    ->concentration_up( remove );
+              }
+            }
           }
         }
-      }
     }
   }
     }
