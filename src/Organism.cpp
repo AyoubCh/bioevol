@@ -301,7 +301,7 @@ void Organism::activate_pump() {
             }
           }
         } else {
-            #pragma omp critical(activate_pump2)
+            //#pragma omp critical(activate_pump2)
             {
               for (auto prot : gridcell_->protein_list_map_) {
                 if ((*it)->start_range_ >= prot.first &&
