@@ -331,6 +331,8 @@ void Organism::activate_pump() {
 
 
 void Organism::compute_protein_concentration() {
+  //static float min = 1000;
+  //static float max = 0;
   int rna_id = 0;
   for (auto it = rna_list_.begin(); it != rna_list_.end(); it++) {
     float delta_pos = 0, delta_neg = 0;
@@ -343,6 +345,16 @@ void Organism::compute_protein_concentration() {
 
     float delta_pos_pow_n = pow(delta_pos,Common::hill_shape_n);
     float delta_neg_pow_n = pow(delta_neg,Common::hill_shape_n);
+
+    /*if(delta_pos_pow_n > max) {
+        max = delta_pos_pow_n;
+        std::cout << "now max is " <<max<< std::endl;
+    }
+
+    if(delta_pos_pow_n < min) {
+        min = delta_pos_pow_n;
+        std::cout << "now min is "<< min << std::endl;
+    }*/
 
      rna_list_[rna_id]->current_concentration_ = rna_list_[rna_id]->concentration_base_
                                * (Common::hill_shape

@@ -7,6 +7,21 @@
 using namespace std;
 
 
+clock_t LastProfilingClock=clock();
+
+inline float profiling (const char *s, clock_t *whichClock=NULL)
+{
+    if (whichClock==NULL)
+        whichClock=&LastProfilingClock;
+
+    clock_t newClock=clock();
+    float res = (float) (newClock-*whichClock) / (float) CLOCKS_PER_SEC;
+    if (s!=NULL)
+        std::cerr << "Time: " << s << ": " << res << std::endl;
+    *whichClock = newClock;
+    return res;
+}
+
 int main(int args, char** argv) {
 
   
@@ -23,6 +38,7 @@ int main(int args, char** argv) {
   if (args == 2 && !strcmp("-t", argv[1])) test = true;
   if (test) {
     world->test_mutate();
+    profiling("Test");
   } else {
     printf("Initialize random population\n");
     world->random_population();

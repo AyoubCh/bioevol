@@ -19,8 +19,9 @@ void Common::init_binding_matrix(uint32_t seed) {
   std::uniform_real_distribution<float> dis_number(-1, 1);
   std::uniform_int_distribution<int8_t> dis_percent(0,100);
 
-#pragma omp for schedule(static)
+#pragma omp parallel for schedule(static)
   for (int i = 0; i < BINDING_MATRIX_SIZE; i++) {
+    #pragma omp parallel for schedule(static)
     for (int j = 0; j < BINDING_MATRIX_SIZE; j++) {
       if (dis_percent(float_gen_) > BINDING_MATRIX_ZERO_PERCENT)
         matrix_binding_[i*BINDING_MATRIX_SIZE+j]=dis_number(float_gen_);
