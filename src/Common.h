@@ -25,6 +25,7 @@ class Common {
     static float matrix_binding_[BINDING_MATRIX_SIZE*BINDING_MATRIX_SIZE];
 
     static void init_binding_matrix(uint32_t seed);
+    static void init_binding_matrix_gpu(uint32_t seed);
     static void save_binding_matrix();
     static void load_binding_matrix();
 
