@@ -22,7 +22,7 @@ class Common {
     const static int BINDING_MATRIX_SIZE = 1000;
     const static int BINDING_MATRIX_ZERO_PERCENT = 75;
 
-    static float matrix_binding_[BINDING_MATRIX_SIZE*BINDING_MATRIX_SIZE];
+    static float *matrix_binding_;
 
     static void init_binding_matrix(uint32_t seed);
     static void init_binding_matrix_gpu(uint32_t seed);

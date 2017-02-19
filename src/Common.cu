@@ -15,7 +15,11 @@
 #include <cuda.h>
 #include <curand_kernel.h>
 
-float Common::matrix_binding_[BINDING_MATRIX_SIZE*BINDING_MATRIX_SIZE];
+float * Common::matrix_binding_ = (float *) calloc(BINDING_MATRIX_SIZE*BINDING_MATRIX_SIZE, sizeof(float));
+
+#define CUDA_CALL(x) do { if((x) != cudaSuccess) { \
+    std::cout << "Error at " << __FILE__ << ":" << __LINE__ << std::endl; \
+    return;}} while(0)
 
 __global__ 
 void setup_gen(curandState *state, uint32_t seed, int size)
@@ -55,20 +59,11 @@ void Common::init_binding_matrix_gpu ( uint32_t seed)
     curandState *float_gen_;
     
     int floatGenSizeInBytes = BINDING_MATRIX_SIZE *BINDING_MATRIX_SIZE* sizeof(curandState);
-    int ok = cudaMalloc((void**) &float_gen_, floatGenSizeInBytes );
-    if(ok!=cudaSuccess){
-            std::cout << "error cudaMalloc 0:" << ok << std::endl ;
-            return;
-    }
+    CUDA_CALL(cudaMalloc((void**) &float_gen_, floatGenSizeInBytes ));
 
     float* gpuMatrixIn;
     int matrixSizeInBytes = BINDING_MATRIX_SIZE *BINDING_MATRIX_SIZE* sizeof(float);
-    ok=cudaMalloc((void**) &gpuMatrixIn, matrixSizeInBytes );
-    if(ok!=cudaSuccess){
-            std::cout << "error cudaMalloc 1:" << ok << std::endl ;
-            return;
-    }
-
+    CUDA_CALL(cudaMalloc((void**) &gpuMatrixIn, matrixSizeInBytes ));
     dim3 dimBlock(32,32);
     dim3 dimGrid(BINDING_MATRIX_SIZE/dimBlock.x, BINDING_MATRIX_SIZE/dimBlock.y);
 
@@ -77,22 +72,10 @@ void Common::init_binding_matrix_gpu ( uint32_t seed)
                   BINDING_MATRIX_ZERO_PERCENT,
                   float_gen_);
 
-    ok = cudaMemcpy(matrix_binding_, gpuMatrixIn, matrixSizeInBytes,cudaMemcpyDeviceToHost);
-    if(ok!=cudaSuccess){
-            std::cout << "error cudaMemcpy 2:" << ok << std::endl ;
-            return;
-    }
+    CUDA_CALL(cudaMemcpy(Common::matrix_binding_, gpuMatrixIn, matrixSizeInBytes,cudaMemcpyDeviceToHost));
 
-    ok = cudaFree(float_gen_);
-    if(ok!=cudaSuccess){
-            std::cout << "error cudaFree 0:" << ok << std::endl ;
-            return;
-    }
-    ok = cudaFree(gpuMatrixIn);
-    if(ok!=cudaSuccess){
-            std::cout << "error cudaFree 1:" << ok << std::endl ;
-            return;
-    }
+    CUDA_CALL(cudaFree(float_gen_));
+    CUDA_CALL(cudaFree(gpuMatrixIn));
 
 }
 
