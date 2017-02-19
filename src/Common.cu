@@ -18,8 +18,8 @@
 float * Common::matrix_binding_ = (float *) calloc(BINDING_MATRIX_SIZE*BINDING_MATRIX_SIZE, sizeof(float));
 
 #define CUDA_CALL(x) do { if((x) != cudaSuccess) { \
-    std::cout << "Error at " << __FILE__ << ":" << __LINE__ << std::endl; \
-    return;}} while(0)
+    std::cout << "Error at " << __FILE__ << ":" << __LINE__  << ": " << cudaGetErrorString((x)) << std::endl; \
+    exit((x));}} while(0)
 
 __global__ 
 void setup_gen(curandState *state, uint32_t seed, int size)
