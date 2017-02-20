@@ -3,9 +3,8 @@
 #include "src/World.h"
 #include "src/Common.h"
 #include <string.h>
-
+	
 using namespace std;
-
 
 clock_t LastProfilingClock=clock();
 
@@ -31,9 +30,12 @@ int main(int args, char** argv) {
     if (!strcmp("-t", argv[i])) test = true;
     else if (!strcmp("-c", argv[i])) cuda = true;
   }
+  clock_t initMatTime;
+  if (test) initMatTime = clock();
   if (cuda) Common::init_binding_matrix_gpu(897685687);
   else Common::init_binding_matrix(897685687);
-  printf("Init binding matrix\n");
+  if (test) profiling("Init binding matrix", &initMatTime);
+  else printf("Init binding matrix\n");
 
   World* world = new World(32, 32, 897986875);
   printf("Create World\n");
@@ -43,7 +45,7 @@ int main(int args, char** argv) {
 
   if (test) {
     world->test_mutate();
-    profiling("Test");
+    profiling("Test total");
   } else {
     printf("Initialize random population\n");
     world->random_population();
